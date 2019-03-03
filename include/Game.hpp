@@ -5,6 +5,7 @@
 #include "FrameTimer.hpp"
 #include "Goal.hpp"
 #include <random>
+#include <queue>
 
 class Game
 {
@@ -29,4 +30,6 @@ private:
     float snekMovePeriod = 0.2f;
 
     bool gameOver = false;
+
+    std::queue <Location> moveQueue;
 };

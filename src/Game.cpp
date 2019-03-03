@@ -23,7 +23,7 @@ void Game::UpdateModel()
 {
     const float dt = ft.Mark();
     waitTime += dt;
-
+    Location oldDir = dir;
     if (kbd.isKeyPressed(sf::Keyboard::W))
     {
         dir = {0, -1};
@@ -41,14 +41,28 @@ void Game::UpdateModel()
         dir = {0, 1};
     }
 
+    //direction changed
+    if (dir != oldDir)
+    {
+        if (oldDir + dir == Location{0,0})
+        {
+            dir = oldDir;
+        }
+        else
+        {
+            moveQueue.push(dir);
+        }
+    }
+
     if ( waitTime > snekMovePeriod)
     {
-        if  (kbd.isKeyPressed(sf::Keyboard::Space))
+        if (!moveQueue.empty())
         {
-            snek.Grow();
+            dir = moveQueue.front();
+            moveQueue.pop();
         }
-
         snek.MoveBy(dir);
+                
         waitTime = 0;
 
         if (snek.IsOutsideBoard() || snek.IsInTile())
@@ -56,7 +70,8 @@ void Game::UpdateModel()
             gameOver = true;
         }
 
-        snek.CheckAndEatGoal(rng, goal);
+        if (snek.CheckAndEatGoal(rng, goal))
+            snekMovePeriod -= 0.005f;
     }
 }
 
