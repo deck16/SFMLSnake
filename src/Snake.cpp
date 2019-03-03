@@ -37,6 +37,11 @@ Location Snake::GetNextHeadLocation(const Location& delta) const
     return l;
 }
 
+Location Snake::GetLoc() const
+{
+    return segments.front().GetLoc();
+}
+
 bool Snake::IsOutsideBoard() const
 {
     return
@@ -69,20 +74,22 @@ bool Snake::IsOverlappingWith(const Location& loc) const
     }
     return false;
 }
-void Snake::CheckAndEatGoal(std::mt19937& rng, Goal& goal)
+bool Snake::CheckAndEatGoal(std::mt19937& rng, Goal& goal)
 {
     if (segments[0].GetLoc() == goal.GetLoc())
     {
         //TODO increase score
         Grow();
         SpawnGoal(rng, goal);
+        return true;
     }
+    return false;
 }
 
 void Snake::SpawnGoal(std::mt19937& rng, Goal& goal) const
 {
-    std::uniform_int_distribution<int> xDist(0, brd.width);
-    std::uniform_int_distribution<int> yDist(0, brd.height);
+    std::uniform_int_distribution<int> xDist(0, brd.width-1);
+    std::uniform_int_distribution<int> yDist(0, brd.height-1);
 
     Location loc = {xDist(rng), yDist(rng)};
     while(IsOverlappingWith(loc))

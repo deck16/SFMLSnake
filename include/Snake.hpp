@@ -24,10 +24,11 @@ public:
     void MoveBy(const Location& delta);
     void Grow();
     Location GetNextHeadLocation(const Location& delta) const;
+    Location GetLoc() const;
     bool IsOutsideBoard() const;
     bool IsInTile() const;
     bool IsOverlappingWith(const Location& loc) const;
-    void CheckAndEatGoal(std::mt19937& rng, Goal& goal);
+    bool CheckAndEatGoal(std::mt19937& rng, Goal& goal);
 private:
     std::vector<Segment> segments;
     sf::Color colHead = sf::Color::Yellow;
