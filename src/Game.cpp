@@ -77,6 +77,7 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+    brd.DrawBorders();
     if (!gameOver)
     {
         goal.Draw();
