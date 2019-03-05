@@ -24,19 +24,19 @@ void Game::UpdateModel()
     const float dt = ft.Mark();
     waitTime += dt;
     Location oldDir = dir;
-    if (kbd.isKeyPressed(sf::Keyboard::W))
+    if (kbd.isKeyPressed(sf::Keyboard::W) || kbd.isKeyPressed(sf::Keyboard::Up))
     {
         dir = {0, -1};
     }
-    if (kbd.isKeyPressed(sf::Keyboard::D))
+    if (kbd.isKeyPressed(sf::Keyboard::D) || kbd.isKeyPressed(sf::Keyboard::Right))
     {
         dir = {1, 0};
     }
-    if (kbd.isKeyPressed(sf::Keyboard::A))
+    if (kbd.isKeyPressed(sf::Keyboard::A) || kbd.isKeyPressed(sf::Keyboard::Left))
     {
         dir = {-1, 0};
     }
-    if (kbd.isKeyPressed(sf::Keyboard::S))
+    if (kbd.isKeyPressed(sf::Keyboard::S) || kbd.isKeyPressed(sf::Keyboard::Down))
     {
         dir = {0, 1};
     }
@@ -71,7 +71,16 @@ void Game::UpdateModel()
         }
 
         if (snek.CheckAndEatGoal(rng, goal))
-            snekMovePeriod -= 0.005f;
+        {
+            if (snekMovePeriod < minMovePeriod)
+            {
+                snekMovePeriod -= 0.005f;
+            }
+            else
+            {
+                snekMovePeriod = minMovePeriod;
+            } 
+        }
     }
 }
 

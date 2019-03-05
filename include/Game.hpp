@@ -28,6 +28,7 @@ private:
 
     float waitTime = 0.0f;
     float snekMovePeriod = 0.2f;
+    float minMovePeriod = 0.08;
 
     bool gameOver = false;
 
