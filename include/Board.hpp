@@ -10,9 +10,9 @@ public:
     void DrawBorders();
 public:
     static constexpr int dim = 20;
-    static constexpr int width = 20;
-    static constexpr int height = 15;
-    static constexpr int borderThickness = 50;
+    static constexpr int width = 30;
+    static constexpr int height = 20;
+    static constexpr int borderThickness = 20;
 private:
     const sf::Color borderColor = sf::Color::Blue;
     const int x0 = (Graphics::ScreenWidth-width*dim)/2;
