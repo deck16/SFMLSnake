@@ -73,7 +73,7 @@ void MainGameState::Update(float dt)
 
         if (snek_.CheckAndEatGoal(rng_, goal_))
         {
-            if (snekMovePeriod_ < minMovePeriod_)
+            if (snekMovePeriod_ > minMovePeriod_)
             {
                 snekMovePeriod_ -= 0.005f;
             }
