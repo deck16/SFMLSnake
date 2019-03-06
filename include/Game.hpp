@@ -1,44 +1,26 @@
 #pragma once
-#include "Graphics.hpp"
-#include "Board.hpp"
-#include "Snake.hpp"
-#include "FrameTimer.hpp"
-#include "Goal.hpp"
-#include <random>
-#include <queue>
-#include "IState.hpp"
-#include <memory>
 
-class Game : public IState
+#include "StateStack.hpp"
+#include <SFML/Graphics.hpp>
+#include <memory>
+#include <string>
+#include "Graphics.hpp"
+#include "FrameTimer.hpp"
+struct GameData
+{
+    sf::RenderWindow wnd;
+    StateStack statesManager;
+};
+
+typedef std::shared_ptr<GameData> GameDataRef;
+
+class Game
 {
 public:
-    Game(std::shared_ptr<class GameData> sharedData);
-    /* Interface */
-    void Init() override;
-    void HandleInput() override;
-    void Update(float dt) override;
-    void Draw() override;
-
-    void Resume() override;
-    void Pause() override;
-    /* End of Interface */
+    Game(int width, int height, std::string title);
 private:
-    std::shared_ptr<class GameData> sharedData_;
-    sf::Keyboard kbd_;
-    Graphics gfx_;
+    float dt_ = 0;
+    GameDataRef sharedData_ = std::make_shared<GameData>();    
+    void Run();
     FrameTimer ft_;
-    std::mt19937 rng_;
-    Board brd_;
-    Snake snek_;
-    Goal goal_;
-    Location dir_ = {1,0};
-    Location oldDir_;
-
-    float waitTime_ = 0.0f;
-    float snekMovePeriod_ = 0.2f;
-    float minMovePeriod_ = 0.08;
-
-    bool gameOver_ = false;
-
-    std::queue <Location> moveQueue_;
 };

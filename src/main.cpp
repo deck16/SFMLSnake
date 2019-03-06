@@ -1,7 +1,7 @@
-#include "_Game.hpp"
+#include "Game.hpp"
 
 int main()
 {
-    _Game game(800, 600, "Sneko Time!");
+    Game game(800, 600, "Sneko Time!");
     return 0;
 }

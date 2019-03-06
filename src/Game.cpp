@@ -1,107 +1,34 @@
 #include "Game.hpp"
-#include <iostream>
+#include "MainGameState.hpp"
+#include "Graphics.hpp"
 
-#include "_Game.hpp"
-Game::Game(std::shared_ptr<GameData> sharedData)
-    :
-    sharedData_(sharedData),
-    gfx_(sharedData_->wnd),
-    rng_(std::random_device()()),
-    brd_(gfx_),
-    snek_(brd_, {1,1}),
-    goal_(brd_)
-{}
-
-void Game::Init()
+Game::Game(int width, int height, std::string title)
 {
-    std::cout << "Main Game State Initialized!" << std::endl;
+    sharedData_->wnd.create(sf::VideoMode(width, height), title);
+    sharedData_->statesManager
+    .AddState(std::move(std::make_unique<MainGameState>(sharedData_)));
+    Run();
 }
 
-void Game::HandleInput()
+void Game::Run()
 {
-    oldDir_ = dir_;
-    if (kbd_.isKeyPressed(sf::Keyboard::W) || kbd_.isKeyPressed(sf::Keyboard::Up))
+    while(sharedData_->wnd.isOpen())
     {
-        dir_ = {0, -1};
-    }
-    if (kbd_.isKeyPressed(sf::Keyboard::D) || kbd_.isKeyPressed(sf::Keyboard::Right))
-    {
-        dir_ = {1, 0};
-    }
-    if (kbd_.isKeyPressed(sf::Keyboard::A) || kbd_.isKeyPressed(sf::Keyboard::Left))
-    {
-        dir_ = {-1, 0};
-    }
-    if (kbd_.isKeyPressed(sf::Keyboard::S) || kbd_.isKeyPressed(sf::Keyboard::Down))
-    {
-        dir_ = {0, 1};
-    }
-}
-
-void Game::Update(float dt) 
-{
-    waitTime_ += dt;
-
-    //direction changed
-    if (dir_ != oldDir_)
-    {
-        if (oldDir_ + dir_ == Location{0,0})
+        sf::Event event;
+        while(sharedData_->wnd.pollEvent(event))
         {
-            dir_ = oldDir_;
-        }
-        else
-        {
-            moveQueue_.push(dir_);
-        }
-    }
-
-    if ( waitTime_ > snekMovePeriod_)
-    {
-        if (!moveQueue_.empty())
-        {
-            dir_ = moveQueue_.front();
-            moveQueue_.pop();
-        }
-        snek_.MoveBy(dir_);
-                
-        waitTime_ = 0;
-
-        if (snek_.IsOutsideBoard() || snek_.IsInTile())
-        {
-            gameOver_ = true;
-        }
-
-        if (snek_.CheckAndEatGoal(rng_, goal_))
-        {
-            if (snekMovePeriod_ < minMovePeriod_)
+            if (event.type == sf::Event::Closed)
             {
-                snekMovePeriod_ -= 0.005f;
+                sharedData_->wnd.close();
             }
-            else
-            {
-                snekMovePeriod_ = minMovePeriod_;
-            } 
         }
+        dt_ = ft_.Mark();
+        sharedData_->wnd.clear();
+        sharedData_->statesManager.ProcessStateChanges();
+        sharedData_->statesManager.GetActiveState()->HandleInput();
+        sharedData_->statesManager.GetActiveState()->Update(dt_);
+        sharedData_->statesManager.GetActiveState()->Draw();
+        sharedData_->wnd.display();
     }
-}
 
-void Game::Draw()
-{
-    brd_.DrawBorders();
-    if (!gameOver_)
-    {
-        goal_.Draw();
-        snek_.Draw();
-    }
 }
-
-void Game::Resume()
-{
-    std::cout << "Main Game State Resumed!" << std::endl;
-}
-
-void Game::Pause()
-{
-    std::cout << "Main Game State Paused!" << std::endl;
-}
-
