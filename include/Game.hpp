@@ -6,31 +6,39 @@
 #include "Goal.hpp"
 #include <random>
 #include <queue>
+#include "IState.hpp"
+#include <memory>
 
-class Game
+class Game : public IState
 {
 public:
-    Game(sf::RenderWindow& wnd);
-    void Go();
+    Game(std::shared_ptr<class GameData> sharedData);
+    /* Interface */
+    void Init() override;
+    void HandleInput() override;
+    void Update(float dt) override;
+    void Draw() override;
+
+    void Resume() override;
+    void Pause() override;
+    /* End of Interface */
 private:
-    void UpdateModel();
-    void ComposeFrame();
-private:
-    sf::RenderWindow& wnd;
-    sf::Keyboard kbd;
-    Graphics gfx;
-    FrameTimer ft;
-    std::mt19937 rng;
-    Board brd;
-    Snake snek;
-    Goal goal;
-    Location dir = {1,0};
+    std::shared_ptr<class GameData> sharedData_;
+    sf::Keyboard kbd_;
+    Graphics gfx_;
+    FrameTimer ft_;
+    std::mt19937 rng_;
+    Board brd_;
+    Snake snek_;
+    Goal goal_;
+    Location dir_ = {1,0};
+    Location oldDir_;
 
-    float waitTime = 0.0f;
-    float snekMovePeriod = 0.2f;
-    float minMovePeriod = 0.08;
+    float waitTime_ = 0.0f;
+    float snekMovePeriod_ = 0.2f;
+    float minMovePeriod_ = 0.08;
 
-    bool gameOver = false;
+    bool gameOver_ = false;
 
-    std::queue <Location> moveQueue;
+    std::queue <Location> moveQueue_;
 };

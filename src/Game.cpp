@@ -1,95 +1,107 @@
 #include "Game.hpp"
 #include <iostream>
 
-Game::Game(sf::RenderWindow& wnd)
+#include "_Game.hpp"
+Game::Game(std::shared_ptr<GameData> sharedData)
     :
-    wnd(wnd),
-    gfx(wnd),
-    rng(std::random_device()()),
-    brd(gfx),
-    snek(brd, {1,1}),
-    goal(brd)
+    sharedData_(sharedData),
+    gfx_(sharedData_->wnd),
+    rng_(std::random_device()()),
+    brd_(gfx_),
+    snek_(brd_, {1,1}),
+    goal_(brd_)
 {}
 
-void Game::Go()
+void Game::Init()
 {
-    gfx.BeginFrame();
-    UpdateModel();
-    ComposeFrame();
-    gfx.EndFrame();
+    std::cout << "Main Game State Initialized!" << std::endl;
 }
 
-void Game::UpdateModel()
+void Game::HandleInput()
 {
-    const float dt = ft.Mark();
-    waitTime += dt;
-    Location oldDir = dir;
-    if (kbd.isKeyPressed(sf::Keyboard::W) || kbd.isKeyPressed(sf::Keyboard::Up))
+    oldDir_ = dir_;
+    if (kbd_.isKeyPressed(sf::Keyboard::W) || kbd_.isKeyPressed(sf::Keyboard::Up))
     {
-        dir = {0, -1};
+        dir_ = {0, -1};
     }
-    if (kbd.isKeyPressed(sf::Keyboard::D) || kbd.isKeyPressed(sf::Keyboard::Right))
+    if (kbd_.isKeyPressed(sf::Keyboard::D) || kbd_.isKeyPressed(sf::Keyboard::Right))
     {
-        dir = {1, 0};
+        dir_ = {1, 0};
     }
-    if (kbd.isKeyPressed(sf::Keyboard::A) || kbd.isKeyPressed(sf::Keyboard::Left))
+    if (kbd_.isKeyPressed(sf::Keyboard::A) || kbd_.isKeyPressed(sf::Keyboard::Left))
     {
-        dir = {-1, 0};
+        dir_ = {-1, 0};
     }
-    if (kbd.isKeyPressed(sf::Keyboard::S) || kbd.isKeyPressed(sf::Keyboard::Down))
+    if (kbd_.isKeyPressed(sf::Keyboard::S) || kbd_.isKeyPressed(sf::Keyboard::Down))
     {
-        dir = {0, 1};
+        dir_ = {0, 1};
     }
+}
+
+void Game::Update(float dt) 
+{
+    waitTime_ += dt;
 
     //direction changed
-    if (dir != oldDir)
+    if (dir_ != oldDir_)
     {
-        if (oldDir + dir == Location{0,0})
+        if (oldDir_ + dir_ == Location{0,0})
         {
-            dir = oldDir;
+            dir_ = oldDir_;
         }
         else
         {
-            moveQueue.push(dir);
+            moveQueue_.push(dir_);
         }
     }
 
-    if ( waitTime > snekMovePeriod)
+    if ( waitTime_ > snekMovePeriod_)
     {
-        if (!moveQueue.empty())
+        if (!moveQueue_.empty())
         {
-            dir = moveQueue.front();
-            moveQueue.pop();
+            dir_ = moveQueue_.front();
+            moveQueue_.pop();
         }
-        snek.MoveBy(dir);
+        snek_.MoveBy(dir_);
                 
-        waitTime = 0;
+        waitTime_ = 0;
 
-        if (snek.IsOutsideBoard() || snek.IsInTile())
+        if (snek_.IsOutsideBoard() || snek_.IsInTile())
         {
-            gameOver = true;
+            gameOver_ = true;
         }
 
-        if (snek.CheckAndEatGoal(rng, goal))
+        if (snek_.CheckAndEatGoal(rng_, goal_))
         {
-            if (snekMovePeriod < minMovePeriod)
+            if (snekMovePeriod_ < minMovePeriod_)
             {
-                snekMovePeriod -= 0.005f;
+                snekMovePeriod_ -= 0.005f;
             }
             else
             {
-                snekMovePeriod = minMovePeriod;
+                snekMovePeriod_ = minMovePeriod_;
             } 
         }
     }
 }
 
-void Game::ComposeFrame()
+void Game::Draw()
 {
-    brd.DrawBorders();
-    if (!gameOver)
+    brd_.DrawBorders();
+    if (!gameOver_)
     {
-        goal.Draw();
-        snek.Draw();
+        goal_.Draw();
+        snek_.Draw();
     }
 }
+
+void Game::Resume()
+{
+    std::cout << "Main Game State Resumed!" << std::endl;
+}
+
+void Game::Pause()
+{
+    std::cout << "Main Game State Paused!" << std::endl;
+}
+
