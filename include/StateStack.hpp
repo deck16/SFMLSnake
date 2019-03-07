@@ -14,9 +14,9 @@ public:
     void ProcessStateChanges();
     StateRef& GetActiveState();
 private:
-    std::stack<StateRef> _stateStack;
-    StateRef _newState;
-    bool _isAdding = false;
-    bool _isRemoving = false;
-    bool _isReplacing= false;
+    std::stack<StateRef> stateStack_;
+    StateRef newState_;
+    bool isAdding_ = false;
+    bool isRemoving_ = false;
+    bool isReplacing_= false;
 };

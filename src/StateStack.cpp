@@ -2,9 +2,9 @@
 
 void StateStack::AddState(StateRef newState, bool isReplacing)
 {
-    _isAdding = true;
-    _isReplacing = isReplacing;
-    _newState = std::move(newState);
+    isAdding_ = true;
+    isReplacing_ = isReplacing;
+    newState_ = std::move(newState);
 }
 
 void StateStack::SwitchState(StateRef newState)
@@ -14,44 +14,44 @@ void StateStack::SwitchState(StateRef newState)
 
 void StateStack::RemoveState()
 {
-    _isRemoving = false;
+    isRemoving_ = false;
 }
 
 void StateStack::ProcessStateChanges()
 {
-    if (_isRemoving)
+    if (isRemoving_)
     {
-        if (!_stateStack.empty())
+        if (!stateStack_.empty())
         {
-            _stateStack.pop();
-            if (!_stateStack.empty())
+            stateStack_.pop();
+            if (!stateStack_.empty())
             {
-                _stateStack.top()->Resume();
+                stateStack_.top()->Resume();
             }
         }
-        _isRemoving = false;
+        isRemoving_ = false;
     }
 
-    if (_isAdding)
+    if (isAdding_)
     {
-        if (!_stateStack.empty())
+        if (!stateStack_.empty())
         {
-            if (_isReplacing)
+            if (isReplacing_)
             {
-                _stateStack.pop();
+                stateStack_.pop();
             }
             else
             {
-                _stateStack.top()->Pause();
+                stateStack_.top()->Pause();
             }
         }
-        _stateStack.push(std::move(_newState));
+        stateStack_.push(std::move(newState_));
         GetActiveState()->Init();
-        _isAdding = false;
+        isAdding_ = false;
     }
 }
 
 StateRef& StateStack::GetActiveState()
 {
-    return _stateStack.top();
+    return stateStack_.top();
 }
