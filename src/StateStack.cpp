@@ -14,7 +14,7 @@ void StateStack::SwitchState(StateRef newState)
 
 void StateStack::RemoveState()
 {
-    isRemoving_ = false;
+    isRemoving_ = true;
 }
 
 void StateStack::ProcessStateChanges()
