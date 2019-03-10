@@ -1,4 +1,5 @@
 #include "MainGameState.hpp"
+#include "MainMenuState.hpp"
 #include <iostream>
 
 #include "Game.hpp"
@@ -20,21 +21,44 @@ void MainGameState::Init()
 void MainGameState::HandleInput()
 {
     oldDir_ = dir_;
-    if (kbd_.isKeyPressed(sf::Keyboard::W) || kbd_.isKeyPressed(sf::Keyboard::Up))
+
+    sf::Event event;
+    while(sharedData_->wnd.pollEvent(event))
     {
-        dir_ = {0, -1};
-    }
-    if (kbd_.isKeyPressed(sf::Keyboard::D) || kbd_.isKeyPressed(sf::Keyboard::Right))
-    {
-        dir_ = {1, 0};
-    }
-    if (kbd_.isKeyPressed(sf::Keyboard::A) || kbd_.isKeyPressed(sf::Keyboard::Left))
-    {
-        dir_ = {-1, 0};
-    }
-    if (kbd_.isKeyPressed(sf::Keyboard::S) || kbd_.isKeyPressed(sf::Keyboard::Down))
-    {
-        dir_ = {0, 1};
+        if (event.type == sf::Event::Closed)
+        {
+            sharedData_->wnd.close();
+        }
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
+            {
+                dir_ = {0, -1};
+            }
+            if (event.key.code == sf::Keyboard::D || event.key.code == sf::Keyboard::Right)
+            {
+                dir_ = {1, 0};
+            }
+            if (event.key.code == sf::Keyboard::A || event.key.code == sf::Keyboard::Left)
+            {
+                dir_ = {-1, 0};
+            }
+            if (event.key.code == sf::Keyboard::S || event.key.code == sf::Keyboard::Down)
+            {
+                dir_ = {0, 1};
+            }
+            if (event.key.code == sf::Keyboard::Escape)
+            {
+                isChangingState_ = true;
+                inhibitKey_ = true;
+            }
+        } 
+        if (event.type == sf::Event::KeyReleased && isChangingState_)
+        {
+            inhibitKey_ = false;
+            isChangingState_ = false;
+            sharedData_->statesManager.AddState(std::move(std::make_unique<MainMenuState>(sharedData_)));
+        }
     }
 }
 
@@ -104,4 +128,3 @@ void MainGameState::Pause()
 {
     std::cout << "Main Game State Paused!" << std::endl;
 }
-

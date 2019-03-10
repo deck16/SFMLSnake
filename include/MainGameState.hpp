@@ -41,4 +41,6 @@ private:
     bool gameOver_ = false;
 
     std::queue <Location> moveQueue_;
+    bool inhibitKey_ = false;
+    bool isChangingState_ = false;
 };
