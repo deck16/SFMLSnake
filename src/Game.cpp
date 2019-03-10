@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "MainGameState.hpp"
+#include "MainMenuState.hpp"
 #include "Graphics.hpp"
 
 Game::Game(int width, int height, std::string title)
@@ -14,14 +15,6 @@ void Game::Run()
 {
     while(sharedData_->wnd.isOpen())
     {
-        sf::Event event;
-        while(sharedData_->wnd.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                sharedData_->wnd.close();
-            }
-        }
         dt_ = ft_.Mark();
         sharedData_->wnd.clear();
         sharedData_->statesManager.ProcessStateChanges();

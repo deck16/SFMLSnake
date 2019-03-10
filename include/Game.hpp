@@ -2,6 +2,7 @@
 
 #include "StateStack.hpp"
 #include <SFML/Graphics.hpp>
+#include "AssetManager.hpp"
 #include <memory>
 #include <string>
 #include "Graphics.hpp"
@@ -9,6 +10,7 @@
 struct GameData
 {
     sf::RenderWindow wnd;
+    AssetManager assetManager;
     StateStack statesManager;
 };
 
