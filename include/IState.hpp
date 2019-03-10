@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 
 class IState
 {
@@ -10,4 +11,6 @@ public:
 
     virtual void Pause() {}
     virtual void Resume() {}
+
+    virtual ~IState() {}
 };
